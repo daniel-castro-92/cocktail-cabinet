@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cocktail Cabinet</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf8f4;--bg2:#f2ede4;--surface:#ffffff;--border:#e5ddd0;--ink:#1c1510;--muted:#8c7e6e;
+  --gin:#2d9e6b;--rum:#d4760a;--whiskey:#c44b1a;--tequila:#b8960a;--cognac:#b52040;
+  --vodka:#2a72b5;--mezcal:#7040b8;--other:#0f8f8f;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;min-height:100vh}
+
+/* ── HEADER ── */
+header{background:var(--surface);border-bottom:2px solid var(--ink);padding:3rem 3rem 2.25rem;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;right:-10px;top:0;bottom:0;width:480px;opacity:.9;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 200'%3E%3Crect x='310' y='8' width='26' height='58' rx='4' fill='%231c1510' opacity='.08'/%3E%3Crect x='316' y='3' width='14' height='13' rx='2' fill='%231c1510' opacity='.08'/%3E%3Cpath d='M323 66 Q310 106 282 152' stroke='%23d4760a' stroke-width='3' fill='none' stroke-linecap='round' opacity='.45'/%3E%3Cpath d='M323 66 Q314 104 290 148' stroke='%23d4760a' stroke-width='1.5' fill='none' stroke-linecap='round' opacity='.2'/%3E%3Cpath d='M252 152 Q252 180 282 180 Q312 180 312 152 Z' fill='none' stroke='%231c1510' stroke-width='1.8' opacity='.11'/%3E%3Cline x1='282' y1='180' x2='282' y2='196' stroke='%231c1510' stroke-width='1.8' opacity='.11'/%3E%3Cline x1='268' y1='196' x2='296' y2='196' stroke='%231c1510' stroke-width='1.8' opacity='.11'/%3E%3Cpath d='M258 168 Q258 180 282 180 Q306 180 306 168 Z' fill='%23d4760a' opacity='.15'/%3E%3Ccircle cx='268' cy='145' r='2.5' fill='%23d4760a' opacity='.28'/%3E%3Ccircle cx='294' cy='140' r='1.8' fill='%23d4760a' opacity='.2'/%3E%3Ccircle cx='280' cy='137' r='1.4' fill='%23d4760a' opacity='.22'/%3E%3Cpath d='M348 156 L357 196 L404 196 L413 156 Z' fill='none' stroke='%231c1510' stroke-width='1.8' opacity='.07'/%3E%3Cpath d='M351 172 L358 196 L403 196 L410 172 Z' fill='%232d9e6b' opacity='.09'/%3E%3C/svg%3E") no-repeat center/contain;pointer-events:none}
+.header-inner{max-width:1400px;margin:0 auto;position:relative}
+.header-eyebrow{font-size:.62rem;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-bottom:.7rem;display:flex;align-items:center;gap:.7rem}
+.header-eyebrow::after{content:'';display:inline-block;width:36px;height:1px;background:var(--muted)}
+header h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.6rem,5.5vw,5rem);line-height:.92;letter-spacing:-.02em;color:var(--ink);margin-bottom:1.1rem}
+header h1 em{font-style:italic;font-weight:300;color:var(--muted)}
+.header-meta{display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap}
+.header-count{display:inline-flex;align-items:center;gap:.45rem;background:var(--ink);color:var(--bg);font-size:.62rem;letter-spacing:.15em;padding:.32rem .8rem}
+.spirit-dots{display:flex;gap:.32rem;align-items:center}
+.spirit-dot{width:8px;height:8px;border-radius:50%}
+.suggest-btn{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;padding:.32rem 1rem;background:transparent;border:1.5px solid var(--ink);color:var(--ink);cursor:pointer;transition:all .2s;text-transform:uppercase;margin-left:auto}
+.suggest-btn:hover{background:var(--ink);color:var(--bg)}
+
+/* ── CONTROLS ── */
+.controls{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(28,21,16,.06);padding:.8rem 3rem}
+.controls-inner{max-width:1400px;margin:0 auto;display:flex;gap:.65rem;flex-wrap:wrap;align-items:center}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap input{width:100%;background:var(--surface);border:1.5px solid var(--border);color:var(--ink);font-family:'DM Mono',monospace;font-size:.8rem;padding:.58rem 1rem .58rem 2.3rem;outline:none;transition:border-color .2s}
+.search-wrap input::placeholder{color:var(--muted)}
+.search-wrap input:focus{border-color:var(--ink)}
+.search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1rem;line-height:1}
+.filters{display:flex;gap:.3rem;flex-wrap:wrap}
+.fb{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.07em;padding:.38rem .75rem;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .18s;white-space:nowrap;display:flex;align-items:center;gap:.3rem}
+.fb .fcount{font-size:.55rem;opacity:.7}
+.fb:hover{color:var(--ink);border-color:var(--ink)}
+.fb.active{color:var(--surface)!important;border-color:transparent!important}
+.fb[data-f="all"].active{background:var(--ink)}
+.fb[data-f="gin"].active{background:var(--gin)}
+.fb[data-f="rum"].active{background:var(--rum)}
+.fb[data-f="whiskey"].active{background:var(--whiskey)}
+.fb[data-f="cognac"].active{background:var(--cognac)}
+.fb[data-f="tequila"].active{background:var(--tequila)}
+.fb[data-f="mezcal"].active{background:var(--mezcal)}
+.fb[data-f="vodka"].active{background:var(--vodka)}
+.fb[data-f="other"].active{background:var(--other)}
+.rc{font-size:.62rem;color:var(--muted);margin-left:auto;letter-spacing:.05em;white-space:nowrap}
+
+/* ── GRID ── */
+.main{max-width:1400px;margin:0 auto;padding:2.25rem 3rem 5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.2rem}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1.5px solid var(--border);display:flex;flex-direction:column;position:relative;overflow:hidden;transition:box-shadow .25s,transform .25s}
+.card:hover{box-shadow:0 8px 32px rgba(28,21,16,.1);transform:translateY(-2px)}
+.card.hidden{display:none}
+.card-band{height:3px;width:100%;flex-shrink:0}
+.card-inner{padding:1.4rem;display:flex;flex-direction:column;gap:.85rem;flex:1}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.7rem}
+.card-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.12rem;line-height:1.2;color:var(--ink);flex:1}
+.spirit-tags{display:flex;flex-direction:column;gap:.28rem;align-items:flex-end}
+.card-tag{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.12em;padding:.16rem .45rem;border:1.5px solid;white-space:nowrap;text-transform:uppercase;background:transparent}
+.card-pending{font-size:.55rem;letter-spacing:.08em;padding:.12rem .4rem;background:#fff8e6;color:#9a6c00;border:1px solid #f0d070;text-transform:uppercase}
+
+/* ── FLAVOR PILLS ── */
+.flavor-row{display:flex;gap:.3rem;flex-wrap:wrap}
+.flav{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.08em;padding:.18rem .5rem;border-radius:99px;border:1px solid var(--border);text-transform:uppercase}
+.flav.sour     {background:#fff8e6;color:#9a6c00;border-color:#f0d070}
+.flav.sweet    {background:#fef0f2;color:#9a1f35;border-color:#f0a0b0}
+.flav.boozy    {background:#f5f0ff;color:#5a30a0;border-color:#c8a8f0}
+.flav.bitter   {background:#f0f8f0;color:#2a7a3a;border-color:#90cc90}
+.flav.fruity   {background:#fff4ee;color:#b84010;border-color:#f0a878}
+.flav.herbal   {background:#edfaf3;color:#1a7a4a;border-color:#80d0a0}
+.flav.smoky    {background:#f4f0ec;color:#5a3a20;border-color:#c0a080}
+.flav.citrus   {background:#fffbe8;color:#8a6000;border-color:#e8cc60}
+.flav.spicy    {background:#fff0f0;color:#aa2000;border-color:#f0a090}
+.flav.creamy   {background:#f8f4ff;color:#5a3080;border-color:#d0b0f0}
+.flav.nutty    {background:#f8f5ee;color:#7a5020;border-color:#d0b080}
+.flav.floral   {background:#fff0f8;color:#9a2070;border-color:#f0a0d0}
+.flav.tropical {background:#f0fcf8;color:#0a7a50;border-color:#70d0a8}
+.flav.refreshing{background:#eef8ff;color:#1060a0;border-color:#80c0f0}
+.flav.tiki     {background:#fff8f0;color:#a04010;border-color:#f0c080}
+
+/* ── INGREDIENTS ── */
+.card-ings{list-style:none;display:flex;flex-direction:column;border-top:1px solid var(--border);padding-top:.7rem}
+.card-ings li{display:flex;gap:.6rem;padding:.26rem 0;border-bottom:1px solid rgba(0,0,0,.035);font-size:.78rem;line-height:1.45;align-items:baseline}
+.card-ings li:last-child{border-bottom:none}
+.card-ings .amt{font-size:.7rem;color:var(--muted);min-width:50px;flex-shrink:0}
+.card-ings .divider-row{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;border-bottom:none;padding:.45rem 0 .1rem}
+.card-garnish{font-size:.72rem;color:var(--muted);font-style:italic;padding-top:.5rem;border-top:1px solid var(--border);margin-top:auto;line-height:1.45}
+.card-note{font-size:.7rem;color:var(--muted);line-height:1.55;padding:.55rem .7rem;border-left:2px solid var(--border);background:var(--bg)}
+
+/* ── EMPTY ── */
+.empty{display:none;text-align:center;padding:5rem 2rem;color:var(--muted)}
+.empty.visible{display:block}
+.empty h3{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--ink);margin:.7rem 0 .4rem}
+
+/* ── MODAL BACKDROP ── */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(28,21,16,.55);z-index:200;justify-content:center;align-items:center;padding:1.5rem;backdrop-filter:blur(6px)}
+.modal-backdrop.open{display:flex}
+
+/* ── SUGGEST MODAL ── */
+.suggest-modal{background:var(--surface);border:2px solid var(--ink);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;position:relative;animation:mIn .25s ease}
+@keyframes mIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.smod-header{background:var(--ink);color:var(--bg);padding:1.75rem 2rem 1.5rem;position:relative}
+.smod-header h2{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:900}
+.smod-header p{font-size:.72rem;color:rgba(250,248,244,.55);margin-top:.35rem;line-height:1.5}
+.smod-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--bg);width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;transition:background .2s}
+.smod-close:hover{background:rgba(255,255,255,.25)}
+.smod-body{padding:1.75rem 2rem 2rem;display:flex;flex-direction:column;gap:1.1rem}
+.field{display:flex;flex-direction:column;gap:.4rem}
+.field label{font-size:.62rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.field input,.field select,.field textarea{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--border);padding:.58rem .8rem;outline:none;transition:border-color .2s;width:100%;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink)}
+.field textarea{min-height:90px}
+.field-hint{font-size:.62rem;color:var(--muted);line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.smod-lookup{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.08em;padding:.45rem .9rem;border:1.5px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;transition:all .2s;align-self:flex-start}
+.smod-lookup:hover{border-color:var(--ink);color:var(--ink)}
+.lookup-result{font-size:.72rem;padding:.65rem .85rem;border-left:2px solid;line-height:1.55;display:none}
+.lookup-result.found{border-color:var(--gin);background:#edfaf3;color:#1a5a30;display:block}
+.lookup-result.notfound{border-color:var(--cognac);background:#fef0f2;color:#7a1020;display:block}
+.smod-submit{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.12em;padding:.65rem 1.5rem;background:var(--ink);color:var(--bg);border:none;cursor:pointer;transition:opacity .2s;text-transform:uppercase;align-self:flex-start}
+.smod-submit:hover{opacity:.8}
+.smod-submit:disabled{opacity:.4;cursor:not-allowed}
+.smod-status{font-size:.75rem;padding:.65rem .85rem;display:none;line-height:1.5}
+.smod-status.success{border-left:2px solid var(--gin);background:#edfaf3;color:#1a5a30;display:block}
+.smod-status.error{border-left:2px solid var(--cognac);background:#fef0f2;color:#7a1020;display:block}
+
+/* ── SPIRIT HELPERS ── */
+.s-gin    {color:var(--gin);    border-color:var(--gin)}
+.s-rum    {color:var(--rum);    border-color:var(--rum)}
+.s-whiskey{color:var(--whiskey);border-color:var(--whiskey)}
+.s-tequila{color:var(--tequila);border-color:var(--tequila)}
+.s-cognac {color:var(--cognac); border-color:var(--cognac)}
+.s-vodka  {color:var(--vodka);  border-color:var(--vodka)}
+.s-mezcal {color:var(--mezcal); border-color:var(--mezcal)}
+.s-other  {color:var(--other);  border-color:var(--other)}
+.bg-gin    {background:var(--gin)}
+.bg-rum    {background:var(--rum)}
+.bg-whiskey{background:var(--whiskey)}
+.bg-tequila{background:var(--tequila)}
+.bg-cognac {background:var(--cognac)}
+.bg-vodka  {background:var(--vodka)}
+.bg-mezcal {background:var(--mezcal)}
+.bg-other  {background:var(--other)}
+
+@media(max-width:768px){
+  header,.controls,.main{padding-left:1.25rem;padding-right:1.25rem}
+  .grid{grid-template-columns:1fr}
+  .rc{display:none}
+  header::before{opacity:.3}
+  .field-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <p class="header-eyebrow">A Personal Compendium</p>
+    <h1>The Cocktail<br><em>Cabinet</em></h1>
+    <div class="header-meta">
+      <span class="header-count" id="hcount">75 RECIPES</span>
+      <div class="spirit-dots">
+        <div class="spirit-dot" style="background:var(--gin)"></div>
+        <div class="spirit-dot" style="background:var(--rum)"></div>
+        <div class="spirit-dot" style="background:var(--whiskey)"></div>
+        <div class="spirit-dot" style="background:var(--cognac)"></div>
+        <div class="spirit-dot" style="background:var(--tequila)"></div>
+        <div class="spirit-dot" style="background:var(--mezcal)"></div>
+        <div class="spirit-dot" style="background:var(--vodka)"></div>
+        <div class="spirit-dot" style="background:var(--other)"></div>
+      </div>
+      <button class="suggest-btn" onclick="openSuggest()">+ Suggest a Cocktail</button>
+    </div>
+  </div>
+</header>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="controls-inner">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="search" placeholder="Search cocktails or ingredients…" oninput="apply()">
+    </div>
+    <div class="filters">
+      <button class="fb active" data-f="all"     onclick="setF('all',this)">ALL <span class="fcount" id="fc-all"></span></button>
+      <button class="fb"        data-f="gin"     onclick="setF('gin',this)">GIN <span class="fcount" id="fc-gin"></span></button>
+      <button class="fb"        data-f="rum"     onclick="setF('rum',this)">RUM <span class="fcount" id="fc-rum"></span></button>
+      <button class="fb"        data-f="whiskey" onclick="setF('whiskey',this)">WHISKEY <span class="fcount" id="fc-whiskey"></span></button>
+      <button class="fb"        data-f="cognac"  onclick="setF('cognac',this)">COGNAC <span class="fcount" id="fc-cognac"></span></button>
+      <button class="fb"        data-f="tequila" onclick="setF('tequila',this)">TEQUILA <span class="fcount" id="fc-tequila"></span></button>
+      <button class="fb"        data-f="mezcal"  onclick="setF('mezcal',this)">MEZCAL <span class="fcount" id="fc-mezcal"></span></button>
+      <button class="fb"        data-f="vodka"   onclick="setF('vodka',this)">VODKA <span class="fcount" id="fc-vodka"></span></button>
+      <button class="fb"        data-f="other"   onclick="setF('other',this)">OTHER <span class="fcount" id="fc-other"></span></button>
+    </div>
+    <span class="rc" id="rc"></span>
+  </div>
+</div>
+
+<!-- GRID -->
+<main class="main">
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty">
+    <div style="font-size:2.5rem">🍸</div>
+    <h3>Nothing found</h3>
+    <p style="font-size:.8rem">Try a different search or filter</p>
+  </div>
+</main>
+
+<!-- SUGGEST MODAL -->
+<div class="modal-backdrop" id="suggestBackdrop" onclick="closeSuggestOutside(event)">
+  <div class="suggest-modal">
+    <div class="smod-header">
+      <button class="smod-close" onclick="closeSuggest()">✕</button>
+      <h2>Suggest a Cocktail</h2>
+      <p>Fill in what you know — we'll look it up on Giffard and other sources. If found, the full recipe is added automatically. If not, it goes to the curator for review.</p>
+    </div>
+    <div class="smod-body">
+      <div class="field">
+        <label>Cocktail Name *</label>
+        <input type="text" id="f-name" placeholder="e.g. The Last Word">
+      </div>
+
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+        <button class="smod-lookup" onclick="doLookup()">🔍 Look up recipe automatically</button>
+        <span style="font-size:.62rem;color:var(--muted)">Searches Giffard, Difford's & Liquor.com</span>
+      </div>
+      <div class="lookup-result" id="lookup-result"></div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Primary Spirit *</label>
+          <select id="f-spirit">
+            <option value="">— select —</option>
+            <option value="gin">Gin</option>
+            <option value="rum">Rum</option>
+            <option value="whiskey">Whiskey / Rye / Bourbon</option>
+            <option value="cognac">Cognac / Brandy</option>
+            <option value="tequila">Tequila</option>
+            <option value="mezcal">Mezcal</option>
+            <option value="vodka">Vodka</option>
+            <option value="other">Other / Liqueur</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Additional Spirits</label>
+          <input type="text" id="f-spirits2" placeholder="e.g. rum, cognac">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Ingredients</label>
+        <textarea id="f-ings" placeholder="One per line, e.g.&#10;1.5 oz Plymouth Gin&#10;¾ oz fresh lime juice&#10;½ oz simple syrup"></textarea>
+        <span class="field-hint">One ingredient per line. Amount first, then name.</span>
+      </div>
+
+      <div class="field">
+        <label>Garnish</label>
+        <input type="text" id="f-garnish" placeholder="e.g. Lime wheel">
+      </div>
+
+      <div class="field">
+        <label>Notes / Method</label>
+        <textarea id="f-notes" placeholder="Any tips, variations, or special instructions…" style="min-height:60px"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Source URL (optional)</label>
+        <input type="text" id="f-source" placeholder="https://…">
+      </div>
+
+      <div class="smod-status" id="smod-status"></div>
+
+      <button class="smod-submit" id="smod-submit" onclick="submitSuggestion()">Submit for Review →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIGURATION ────────────────────────────────────────────
+// After deploying your Apps Script, paste the Web App URL below:
+// Paste your Google Apps Script Web App URL here after setup:
+const APPS_SCRIPT_URL = null;
+// ────────────────────────────────────────────────────────────
+
+const C=[
+  {name:"The Pendennis Club",s:["gin"],i:[{a:"1.5 oz",n:"Plymouth Gin"},{a:"1 oz",n:"Giffard Abricot du Roussillon"},{a:"½ oz",n:"Fresh lemon juice"},{a:"2 dashes",n:"Peychaud's Bitters"}],g:null},
+  {name:"The 12 Mile Limit",s:["rum","whiskey","cognac"],i:[{a:"1 oz",n:"El Dorado 3yr Rum"},{a:"½ oz",n:"Rittenhouse 100 proof Rye Whiskey"},{a:"½ oz",n:"Maison Rouge V.S.O.P. Cognac"},{a:"½ oz",n:"Fresh lemon juice"},{a:"½ oz",n:"Grenadine"}],g:null},
+  {name:"The Hemingway Daiquiri",s:["rum"],i:[{a:"1.5 oz",n:"The Real McCoy 3yr Rum"},{a:"¾ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Semi-rich simple syrup (1.5:1)"},{a:"¼ oz",n:"Fresh grapefruit juice"},{a:"¼ oz",n:"Luxardo Maraschino Liqueur"}],g:"Grapefruit peel swath + lime wheel"},
+  {name:"The Mint Julep",s:["whiskey"],i:[{a:"2 oz",n:"Buffalo Trace Bourbon"},{a:"½ oz",n:"Rich Demerara Syrup (2:1)"},{a:"6–8",n:"Mint leaves (muddled)"}],g:"Large mint sprig"},
+  {name:"The Prescription Julep",s:["cognac","whiskey"],i:[{a:"1.5 oz",n:"Maison Rouge V.S.O.P. Cognac"},{a:"½ oz",n:"Rittenhouse 100 proof Rye Whiskey"},{a:"½ oz",n:"Rich Demerara Syrup (2:1)"},{a:"6–8",n:"Mint leaves (muddled)"}],g:"Large mint sprig"},
+  {name:"The Bobby Burns",s:["whiskey"],i:[{a:"2 oz",n:"Monkey Shoulder Blended Malt Scotch"},{a:"1 oz",n:"Cocchi Vermouth di Torino"},{a:"½ oz",n:"Bénédictine Liqueur"}],g:"Lemon zest"},
+  {name:"The Blood and Sand",s:["whiskey"],i:[{a:"¾ oz",n:"Monkey Shoulder Blended Malt Scotch"},{a:"¾ oz",n:"Cocchi Vermouth di Torino"},{a:"¾ oz",n:"Cherry Heering"},{a:"¾ oz",n:"Fresh orange juice"}],g:"Orange slice & cocktail cherry"},
+  {name:"The Paper Plane",s:["whiskey"],i:[{a:"¾ oz",n:"Old Grandad Bonded Bourbon"},{a:"¾ oz",n:"Amaro Nonino"},{a:"¾ oz",n:"Aperol"},{a:"¾ oz",n:"Fresh lemon juice"}],g:null},
+  {name:"La Louisiane (Original)",s:["whiskey"],i:[{a:"½ oz",n:"Rittenhouse 100 proof Rye"},{a:"½ oz",n:"Cocchi Vermouth di Torino"},{a:"½ oz",n:"Bénédictine DOM"},{a:"4 dashes",n:"Herbsaint (or absinthe)"},{a:"4 dashes",n:"Peychaud's Aromatic Bitters"}],g:"Cocktail cherry"},
+  {name:"La Louisiane (Updated)",s:["whiskey"],i:[{a:"1.5 oz",n:"Rittenhouse 100 proof Rye"},{a:"¾ oz",n:"Cocchi Vermouth di Torino"},{a:"¾ oz",n:"Bénédictine DOM"},{a:"4 dashes",n:"Peychaud's Aromatic Bitters"},{a:"4 dashes",n:"Angostura Aromatic Bitters"},{a:"rinse",n:"Absinthe"}],g:"Expressed lemon oil"},
+  {name:"The Monte Carlo",s:["whiskey"],i:[{a:"1.5 oz",n:"Rittenhouse 100 proof Rye Whiskey"},{a:"½ oz",n:"Bénédictine D.O.M."},{a:"2 dashes",n:"Angostura Bitters"}],g:"Expressed lemon oil"},
+  {name:"The Haystack",s:["whiskey"],i:[{a:"1 oz",n:"Old Grand-Dad 114 proof Bourbon"},{a:"¾ oz",n:"Suze"},{a:"¾ oz",n:"Giffard Abricot du Roussillon"},{a:"½ oz",n:"Fresh lemon juice"}],g:"Expressed lemon oil"},
+  {name:"The Lonely Penguin",s:["whiskey"],i:[{a:"1.5 oz",n:"Rittenhouse 100 proof Rye Whiskey"},{a:"½ oz",n:"Combier Crème de Mûre"},{a:"¾ oz",n:"Cream of coconut"},{a:"¾ oz",n:"Fresh lemon juice"},{a:"¼ oz",n:"Semi-rich simple syrup (1.5:1)"},{a:"2 dashes",n:"Angostura Aromatic Bitters"}],g:"2 cherries (eyes), orange wedge (beak), pineapple fronds (flippers), cocktail umbrella"},
+  {name:"Blackbeard's Ghost",s:["rum"],i:[{a:"1 oz",n:"Don Q Gold Rum"},{a:"½ oz",n:"Hamilton 86 Demerara Rum"},{a:"½ oz",n:"Giffard Abricot du Roussillon"},{a:"½ oz",n:"John D. Taylor's Velvet Falernum"},{a:"1 oz",n:"Fresh orange juice"},{a:"½ oz",n:"Fresh lemon juice"},{a:"½ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Rich Demerara syrup (2:1)"},{a:"2 dashes",n:"Angostura Bitters"}],g:"Dehydrated lime wheel & pineapple fronds"},
+  {name:"The Zombie",s:["rum"],i:[{a:"1.5 oz",n:"Appleton Estate 12yr Rare Cask Rum"},{a:"1.5 oz",n:"Don Q Gold Rum"},{a:"1 oz",n:"Hamilton 151 Demerara Rum"},{a:"½ oz",n:"John D. Taylor's Velvet Falernum"},{a:"1 oz",n:"White grapefruit juice"},{a:"¾ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Cinnamon syrup"},{a:"¼ oz",n:"Grenadine"},{a:"1 bsp",n:"St. George Absinthe Verte"},{a:"2 dashes",n:"Angostura Bitters"}],g:"Mint"},
+  {name:"The Siesta",s:["tequila"],i:[{a:"1 oz",n:"Siete Leguas Blanco Tequila"},{a:"½ oz",n:"Campari"},{a:"½ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Grapefruit juice"},{a:"½ oz",n:"Semi-rich simple syrup (1.5:1)"}],g:"Expressed grapefruit oil & peel"},
+  {name:"The Cloister",s:["gin"],i:[{a:"1.5 oz",n:"Beefeater London Dry Gin"},{a:"½ oz",n:"Yellow Chartreuse"},{a:"½ oz",n:"Grapefruit juice"},{a:"½ oz",n:"Fresh lemon juice"},{a:"1 bsp",n:"Semi-rich simple syrup (1.5:1)"}],g:null},
+  {name:"The Halekulani",s:["whiskey"],i:[{a:"¾ oz",n:"Old Grand-Dad Bonded Bourbon"},{a:"¾ oz",n:"Rittenhouse 100 proof Rye"},{a:"½ oz",n:"Rich Demerara syrup (2:1)"},{a:"½ oz",n:"Fresh lemon juice"},{a:"½ oz",n:"Fresh orange juice"},{a:"½ oz",n:"Fresh pineapple juice"},{a:"1 bsp",n:"Grenadine"},{a:"1 dash",n:"Angostura Bitters"}],g:"Pineapple fronds"},
+  {name:"The Barbados Cocktail",s:["rum"],i:[{a:"1.5 oz",n:"The Real McCoy 12yr Rum"},{a:"¾ oz",n:"Anders x Portland Syrups Falernum"},{a:"¾ oz",n:"Fresh lime juice"}],g:"Lime wheel"},
+  {name:"The Prestige Cocktail",s:["rum"],i:[{a:"1 oz",n:"Flor de Caña 7yr Rum"},{a:"1 oz",n:"Fresh pineapple juice"},{a:"½ oz",n:"Dolin Dry Vermouth de Chambéry"},{a:"½ oz",n:"Anders x Portland Syrups Falernum"},{a:"¼ oz",n:"Fresh lime juice"}],g:"Pineapple wedges"},
+  {name:"The Miami Vice",s:["rum"],i:[{a:"— Daiquiri —",n:""},{a:"1.5 oz",n:"Probitas White Rum"},{a:"1 oz",n:"Semi-rich simple syrup (1.5:1)"},{a:"1 oz",n:"Fresh lime juice"},{a:"140 g",n:"Frozen strawberries"},{a:"— Colada —",n:""},{a:"1.5 oz",n:"Probitas White Rum"},{a:"1 oz",n:"Cream of coconut"},{a:"1 oz",n:"Fresh pineapple juice"},{a:"140 g",n:"Frozen pineapple"}],g:"Served split — Strawberry Daiquiri + Piña Colada"},
+  {name:"The Southside",s:["gin"],i:[{a:"2 oz",n:"The Botanist Islay Dry Gin"},{a:"½ oz",n:"Fresh lemon juice"},{a:"½ oz",n:"Fresh lime juice"},{a:"¾ oz",n:"Semi-rich simple syrup (1.5:1)"},{a:"6–10",n:"Mint leaves"}],g:"Mint sprig"},
+  {name:"Three Dots and a Dash",s:["rum"],i:[{a:"1 oz",n:"Rhum J.M VSOP Rhum Agricole"},{a:"1 oz",n:"Hamilton 86 Demerara Rum"},{a:"1 oz",n:"Fresh lime juice"},{a:"½ oz",n:"Orange juice"},{a:"½ oz",n:"Honey syrup (3:1)"},{a:"½ oz",n:"Anders x Portland Syrups Falernum"},{a:"¼ oz",n:"St. Elizabeth Allspice Dram"},{a:"1 dash",n:"Angostura Bitters"}],g:"Pineapple fronds, cherries, pineapple slice"},
+  {name:"The Chartreuse Swizzle",s:["other"],i:[{a:"1.5 oz",n:"Green Chartreuse"},{a:"1.5 oz",n:"Fresh pineapple juice"},{a:"½ oz",n:"Anders x Portland Syrups Falernum"},{a:"¾ oz",n:"Fresh lime juice"}],g:"Mint sprig"},
+  {name:"The Satellite",s:["gin"],i:[{a:"1.5 oz",n:"Beefeater London Dry Gin"},{a:"¾ oz",n:"Fresh lemon juice"},{a:"½ oz",n:"Anders x Portland Syrup Falernum"},{a:"¼ oz",n:"Anders x Portland Syrup Grenadine"},{a:"1 dash",n:"Angostura Bitters"},{a:"½ oz",n:"Soda water"}],g:"Lemon wheel & cherry"},
+  {name:"Between the Sheets",s:["cognac","rum"],i:[{a:"¾ oz",n:"Maison Rouge VSOP Cognac"},{a:"¾ oz",n:"The Real McCoy 3yr Rum"},{a:"1 oz",n:"Pierre Ferrand Dry Curaçao"},{a:"½ oz",n:"Fresh lemon juice"}],g:"Expressed lemon oil & lemon peel"},
+  {name:"The Embassy Cocktail",s:["cognac","rum"],i:[{a:"¾ oz",n:"Maison Rouge VSOP Cognac"},{a:"¾ oz",n:"Appleton Estate Signature Blend Jamaican Rum"},{a:"1 oz",n:"Marie Brizard Orange Curaçao"},{a:"½ oz",n:"Fresh lime juice"},{a:"2 dashes",n:"Angostura Bitters"}],g:"Lime wheel"},
+  {name:"The Sidecar",s:["cognac"],i:[{a:"1.5 oz",n:"Maison Rouge V.S.O.P. Cognac"},{a:"1 oz",n:"Pierre Ferrand Dry Curaçao"},{a:"½ oz",n:"Fresh lemon juice"}],g:"Lemon wedge + white sugar rim"},
+  {name:"The Last Word",s:["gin"],i:[{a:"¾ oz",n:"The Botanist Islay Dry Gin"},{a:"¾ oz",n:"Green Chartreuse"},{a:"¾ oz",n:"Luxardo Maraschino Liqueur"},{a:"¾ oz",n:"Fresh lime juice"}],g:"Cocktail cherry"},
+  {name:"The Sagehen",s:["gin"],i:[{a:"1.5 oz",n:"Plymouth Gin"},{a:"¼ oz",n:"Yellow Chartreuse"},{a:"¾ oz",n:"Fresh lemon juice"},{a:"½ oz",n:"Sage infused honey syrup"},{a:"¼ apple",n:"Red Delicious apple (muddled)"}],g:"Sage leaf",note:"Sage Honey Syrup: 150ml wildflower honey + 50ml boiling water + 4 sage leaves. Simmer 5 min over low heat, steep up to 24 hrs, strain & refrigerate up to 2 months."},
+  {name:"The Widow's Kiss",s:["other"],i:[{a:"1.5 oz",n:"Laird's Straight Applejack 86"},{a:"½ oz",n:"Bénédictine DOM"},{a:"¼ oz",n:"Yellow Chartreuse"},{a:"2 dashes",n:"Angostura Aromatic Bitters"}],g:"Expressed lemon oil"},
+  {name:"Last Flight",s:["whiskey"],i:[{a:"¾ oz",n:"Bourbon Whiskey"},{a:"¾ oz",n:"Green Chartreuse"},{a:"¾ oz",n:"Aperol"},{a:"¾ oz",n:"Fresh lemon juice"}],g:null,note:"A cross between The Last Word and The Paper Plane."},
+  {name:"Naked and Famous",s:["mezcal"],i:[{a:"¾ oz",n:"Del Maguey Vida Mezcal"},{a:"¾ oz",n:"Yellow Chartreuse"},{a:"¾ oz",n:"Aperol"},{a:"¾ oz",n:"Fresh lime juice"}],g:null},
+  {name:"The Division Bell",s:["mezcal"],i:[{a:"1 oz",n:"Del Maguey Vida Mezcal"},{a:"¾ oz",n:"Aperol"},{a:"½ oz",n:"Luxardo Maraschino Liqueur"},{a:"¾ oz",n:"Fresh lime juice"}],g:"Expressed grapefruit oil"},
+  {name:"The Final Ward",s:["whiskey"],i:[{a:"¾ oz",n:"Rittenhouse 100 proof Rye Whiskey"},{a:"¾ oz",n:"Green Chartreuse"},{a:"¾ oz",n:"Luxardo Maraschino Liqueur"},{a:"¾ oz",n:"Fresh lemon juice"}],g:null},
+  {name:"The Monte Cassino",s:["whiskey"],i:[{a:"¾ oz",n:"Rittenhouse 100 proof Rye Whiskey"},{a:"¾ oz",n:"Yellow Chartreuse"},{a:"¾ oz",n:"Bénédictine Liqueur"},{a:"¾ oz",n:"Fresh lemon juice"}],g:null},
+  {name:"Banana Daiquiri",s:["rum"],i:[{a:"2 oz",n:"Aged rum"},{a:"½ oz",n:"Banana liqueur"},{a:"1 oz",n:"Fresh lime juice"},{a:"¼ oz",n:"Demerara syrup"}],g:"Banana slice"},
+  {name:"Bourbon Blackberry Smash",s:["whiskey"],i:[{a:"2 oz",n:"Elijah Craig Small Batch Bourbon"},{a:"¾ oz",n:"Maple syrup"},{a:"4 slices",n:"Lemon (halved, seeds removed)"},{a:"4",n:"Blackberries (muddled)"},{a:"6–8",n:"Mint leaves"}],g:"Blackberry & mint sprig"},
+  {name:"Strawberry Basil Smash",s:["rum"],i:[{a:"2 oz",n:"Appleton Estate Signature Blend V/X Jamaican Rum"},{a:"½ oz",n:"Rich Demerara syrup (2:1)"},{a:"4 slices",n:"Lemon (halved, seeds removed)"},{a:"2",n:"Strawberries (muddled)"},{a:"8–10",n:"Basil leaves"}],g:"Strawberry slices & basil sprig"},
+  {name:"Blueberry Thyme Smash",s:["gin"],i:[{a:"2 oz",n:"The Botanist Islay Dry Gin"},{a:"¾ oz",n:"Semi-rich simple syrup (1.5:1)"},{a:"4 slices",n:"Lemon (halved, seeds removed)"},{a:"10–15",n:"Blueberries (muddled)"},{a:"4–6",n:"Thyme sprigs"}],g:"Blueberries & bundle of thyme"},
+  {name:"Pornstar Martini",s:["vodka"],i:[{a:"1⅔ oz",n:"Vanilla Vodka"},{a:"⅚ oz",n:"Passoa"},{a:"½ oz",n:"Vanilla syrup"},{a:"⅓ oz",n:"Lime juice"},{a:"⅚ oz",n:"Passion fruit syrup"},{a:"1⅔ oz",n:"Passion fruit juice"},{a:"1 oz",n:"Fresh egg white (optional)"}],g:"Half a passion fruit + champagne sidecar"},
+  {name:"Baby's First Bourbon",s:["whiskey"],i:[{a:"2 oz",n:"Bourbon"},{a:"¾ oz",n:"Orgeat"},{a:"¾ oz",n:"Fresh lemon juice"},{a:"4 dashes",n:"Angostura Bitters"}],g:"Lemon or orange twist"},
+  {name:"Campanula Sour",s:["vodka"],i:[{a:"2 oz",n:"Grapefruit Vodka"},{a:"¾ oz",n:"Elderflower Liqueur"},{a:"¾ oz",n:"Fresh lemon juice"},{a:"½ oz",n:"Red bell pepper juice"},{a:"1 dash",n:"Simple syrup"},{a:"8–10",n:"Mint leaves"}],g:"Red bell pepper slice"},
+  {name:"Reles Sour",s:["rum"],i:[{a:"1.5 oz",n:"Barbados Rum"},{a:"½ oz",n:"Orange Liqueur"},{a:"½ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Vanilla syrup"},{a:"¼ oz",n:"Orange juice"},{a:"1",n:"Egg white"}],g:"Malbec reduction float"},
+  {name:"The Cosmopolitan",s:["vodka"],i:[{a:"1.5 oz",n:"Valentine Vodka"},{a:"¾ oz",n:"Luxardo Triplum Triple Sec"},{a:"½ oz",n:"Cranberry juice"},{a:"½ oz",n:"Fresh lime juice"}],g:"Orange oil & lime wheel"},
+  {name:"The Piña Colada",s:["rum"],i:[{a:"2 oz",n:"The Real McCoy 3yr Rum"},{a:"1 oz",n:"Homemade cream of coconut (or Coco Lopez)"},{a:"1 oz",n:"Coconut milk"},{a:"6 oz",n:"Fresh pineapple juice"},{a:"8–10 oz",n:"Crushed ice"}],g:null},
+  {name:"The Painkiller",s:["rum"],i:[{a:"1 oz",n:"El Dorado 8yr Demerara Rum"},{a:"1 oz",n:"Smith & Cross Jamaican Rum"},{a:"3 oz",n:"Fresh pineapple juice"},{a:"1 oz",n:"Homemade cream of coconut (or Coco Lopez)"},{a:"1 oz",n:"Fresh orange juice"}],g:"Grated nutmeg"},
+  {name:"Jungle Bird",s:["rum"],i:[{a:"2 oz",n:"Dark Jamaican Rum"},{a:"¾ oz",n:"Campari"},{a:"2 oz",n:"Pineapple juice"},{a:"½ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Simple syrup"}],g:"Pineapple frond"},
+  {name:"Añejo Highball",s:["rum"],i:[{a:"1.5 oz",n:"White Rum"},{a:"½ oz",n:"Orange Curaçao"},{a:"¼ oz",n:"Fresh lime juice"},{a:"2 dashes",n:"Angostura Bitters"},{a:"top",n:"Ginger beer"}],g:"Lime wheel & orange slice"},
+  {name:"Kingston Negroni",s:["rum"],i:[{a:"1 oz",n:"Jamaican Rum"},{a:"1 oz",n:"Campari"},{a:"1 oz",n:"Sweet Vermouth"}],g:"Orange twist"},
+  {name:"Gin Basil Smash",s:["gin"],i:[{a:"2 oz",n:"Gin"},{a:"1 oz",n:"Fresh lemon juice"},{a:"¾ oz",n:"Simple syrup"},{a:"6",n:"Basil leaves (muddled)"}],g:"Basil sprig"},
+  {name:"Tia Mia",s:["mezcal","rum"],i:[{a:"1 oz",n:"Mezcal"},{a:"1 oz",n:"Appleton Signature Rum"},{a:"½ oz",n:"Dry Curaçao"},{a:"¾ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Orgeat"}],g:"Mint sprig, lime wheel, orchid"},
+  {name:"Rye Smash (Tennessee Style)",s:["whiskey"],i:[{a:"2 oz",n:"Jack Daniel's Rye (or black label)"},{a:"⅜ oz",n:"Fresh lemon juice"},{a:"⅜ oz",n:"Fresh lime juice"},{a:"1 oz",n:"Orgeat"},{a:"½ oz",n:"Cointreau"}],g:"Mint sprig & lime wheel"},
+  {name:"Juliet & Romeo",s:["gin"],i:[{a:"2 oz",n:"Beefeater London Dry Gin"},{a:"¾ oz",n:"Fresh lime juice"},{a:"¾ oz",n:"Simple syrup (1:1)"},{a:"4 drops",n:"Rose water"},{a:"¼–½ oz",n:"Aquafaba (optional)"},{a:"3 slices",n:"Cucumber (muddled)"},{a:"pinch",n:"Salt"},{a:"sprig",n:"Mint"},{a:"3 drops",n:"Angostura Bitters"}],g:"Mint leaf, rose water drop, bitters drops"},
+  {name:"The White Lady",s:["gin"],i:[{a:"1.5 oz",n:"Plymouth Gin"},{a:"¾ oz",n:"Luxardo Triplum Triple Sec"},{a:"¾ oz",n:"Fresh lemon juice"},{a:"¼ oz",n:"Semi-rich simple syrup (1.5:1)"},{a:"1",n:"Egg white (or aquafaba)"}],g:null},
+  {name:"Classic Margarita",s:["tequila"],i:[{a:"2 oz",n:"Milagro Reposado Tequila"},{a:"1 oz",n:"Marie Brizard Orange Curaçao"},{a:"1 oz",n:"Fresh lime juice"}],g:"Salted rim & lime wheel"},
+  {name:"Smoky Spicy Margarita",s:["mezcal"],i:[{a:"2 oz",n:"Del Maguey Vida Mezcal"},{a:"1 oz",n:"Marie Brizard Orange Curaçao"},{a:"1 oz",n:"Fresh lime juice"},{a:"¼ oz",n:"Agave nectar"},{a:"2–3 slices",n:"Jalapeño (muddled)"}],g:"Tajin rim & lime wheel"},
+  {name:"Frozen Strawberry Margarita",s:["tequila"],i:[{a:"2 oz",n:"Milagro Reposado Tequila"},{a:"1 oz",n:"Marie Brizard Orange Curaçao"},{a:"1 oz",n:"Fresh lime juice"},{a:"½ oz",n:"Agave nectar"},{a:"1–1.5 cups",n:"Frozen strawberries"},{a:"½ cup",n:"Crushed ice"}],g:"Strawberry"},
+  {name:"Whiskey Sour",s:["whiskey"],i:[{a:"1.5 oz",n:"Buffalo Trace Bourbon"},{a:"¾ oz",n:"Fresh lemon juice"},{a:"½ oz",n:"Rich Demerara syrup (2:1)"},{a:"½ oz",n:"Egg white (or aquafaba)"}],g:"3 drops Angostura Bitters & lemon oil",note:"Dry shake (without ice) first for best foam texture."},
+  {name:"Mojito (Fast)",s:["rum"],i:[{a:"2 oz",n:"The Real McCoy 3yr Rum"},{a:"¾ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Rich Demerara syrup (2:1)"},{a:"10–12",n:"Mint leaves"}],g:"Mint sprig"},
+  {name:"Mojito (Slow)",s:["rum"],i:[{a:"2 oz",n:"The Real McCoy 3yr Rum"},{a:"½ lime",n:"Cut into 4 pieces (muddled)"},{a:"1 tbsp",n:"Raw Demerara sugar"},{a:"10–12",n:"Mint leaves"}],g:"Mint sprig"},
+  {name:"Classic Daiquiri",s:["rum"],i:[{a:"2 oz",n:"Real McCoy 3yr Rum"},{a:"¾ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Semi-rich simple syrup (1.5:1)"}],g:"Lime wheel"},
+  {name:"Dark Daiquiri",s:["rum"],i:[{a:"2 oz",n:"Hamilton Jamaican Black Pot Still Rum"},{a:"1 oz",n:"Fresh lime juice"},{a:"½ oz",n:"Rich Demerara syrup (2:1)"}],g:"Lime wheel"},
+  {name:"Queen's Park Swizzle",s:["rum"],i:[{a:"2 oz",n:"El Dorado 12yr Demerara Rum"},{a:"¾ oz",n:"Fresh lime juice"},{a:"½ oz",n:"Rich Demerara syrup (2:1)"},{a:"8–10",n:"Mint leaves"},{a:"4–6 dashes",n:"Angostura Bitters"}],g:"Mint"},
+  {name:"Whiskey Smash",s:["whiskey"],i:[{a:"2 oz",n:"Old Grand-Dad 100 proof Bourbon"},{a:"½ oz",n:"Rich Demerara syrup (2:1)"},{a:"4 slices",n:"Lemon (seeds removed)"},{a:"4–8",n:"Mint leaves"}],g:"Lemon wheel & mint sprig"},
+  {name:"Hotel Nacional",s:["rum"],i:[{a:"1.5 oz",n:"El Dorado 3yr Light Rum"},{a:"½ oz",n:"Rothman & Winter Apricot Liqueur"},{a:"1 oz",n:"Pineapple juice"},{a:"½ oz",n:"Fresh lime juice"},{a:"¼ oz",n:"Semi-rich simple syrup (1.5:1)"}],g:"Lime wheel"},
+  {name:"Mexican Firing Squad",s:["tequila"],i:[{a:"1.5 oz",n:"Milagro Reposado Tequila"},{a:"¾ oz",n:"Homemade grenadine"},{a:"¾ oz",n:"Fresh lime juice"},{a:"3–4 dashes",n:"Angostura Bitters"}],g:"Lime wheel"},
+  {name:"The Port Light",s:["whiskey"],i:[{a:"2 oz",n:"Old Grand-Dad 100 proof Bourbon"},{a:"½ oz",n:"Passion fruit syrup"},{a:"½ oz",n:"Homemade grenadine"},{a:"1 oz",n:"Fresh lemon juice"}],g:"Pineapple fronds & cocktail umbrella"},
+  {name:"The Rum Manhattan",s:["rum"],i:[{a:"2 oz",n:"El Dorado 12yr Demerara Rum"},{a:"1 oz",n:"Cocchi Vermouth di Torino"},{a:"2 dashes",n:"Angostura Bitters"}],g:"Lemon twist or cocktail cherry"},
+  {name:"Negroni",s:["gin"],i:[{a:"1.5 oz",n:"The Botanist Islay Dry Gin"},{a:"¾ oz",n:"Campari"},{a:"¾ oz",n:"Cocchi Vermouth di Torino"}],g:"Orange zest"},
+  {name:"The Pegu Club",s:["gin"],i:[{a:"1.5 oz",n:"Plymouth Gin"},{a:"¾ oz",n:"Marie Brizard Orange Curaçao"},{a:"¾ oz",n:"Fresh lime juice"},{a:"2 dashes",n:"Angostura Bitters"}],g:"Expressed orange oil"},
+  {name:"The Manhattan",s:["whiskey"],i:[{a:"2 oz",n:"Old Grand Dad 100 proof Bourbon"},{a:"1 oz",n:"Cocchi Vermouth di Torino"},{a:"2–3 dashes",n:"Angostura Bitters"}],g:"Cocktail cherry"},
+  {name:"New York Sour",s:["whiskey"],i:[{a:"1.5 oz",n:"Basil Hayden Bourbon"},{a:"¾ oz",n:"Fresh lemon juice"},{a:"½ oz",n:"Rich Demerara syrup (2:1)"},{a:"½ oz",n:"Aquafaba or egg white"},{a:"¾ oz",n:"Red wine (float)"}],g:"Lemon oil (optional)"},
+  {name:"The Boulevardier",s:["whiskey"],i:[{a:"1.5 oz",n:"Old Grand-Dad 100 proof Bourbon"},{a:"¾ oz",n:"Cocchi Vermouth di Torino"},{a:"¾ oz",n:"Campari"}],g:"Flamed orange oil"},
+  {name:"The Old Fashioned",s:["whiskey"],i:[{a:"2 oz",n:"Old Grand-Dad 100 proof Bourbon"},{a:"¼ oz",n:"Rich Demerara syrup (2:1)"},{a:"4 dashes",n:"Angostura Bitters"},{a:"piece",n:"Small orange (expressed)"}],g:"Orange peel & cherry"},
+];
+
+const FLAVORS={
+  "The Pendennis Club":       ["fruity","sour","floral"],
+  "The 12 Mile Limit":        ["sour","boozy","fruity"],
+  "The Hemingway Daiquiri":   ["sour","citrus","fruity"],
+  "The Mint Julep":           ["boozy","refreshing","herbal"],
+  "The Prescription Julep":   ["boozy","refreshing","herbal"],
+  "The Bobby Burns":          ["boozy","herbal","bitter"],
+  "The Blood and Sand":       ["fruity","sweet","bitter"],
+  "The Paper Plane":          ["sour","bitter","fruity"],
+  "La Louisiane (Original)":  ["boozy","herbal","bitter"],
+  "La Louisiane (Updated)":   ["boozy","herbal","bitter"],
+  "The Monte Carlo":          ["boozy","herbal","bitter"],
+  "The Haystack":             ["sour","bitter","fruity"],
+  "The Lonely Penguin":       ["sweet","creamy","fruity"],
+  "Blackbeard's Ghost":       ["fruity","tropical","sour"],
+  "The Zombie":               ["tropical","tiki","boozy"],
+  "The Siesta":               ["sour","bitter","citrus"],
+  "The Cloister":             ["sour","herbal","citrus"],
+  "The Halekulani":           ["fruity","tropical","sweet"],
+  "The Barbados Cocktail":    ["sour","citrus","herbal"],
+  "The Prestige Cocktail":    ["tropical","fruity","herbal"],
+  "The Miami Vice":           ["tropical","creamy","sweet"],
+  "The Southside":            ["refreshing","herbal","citrus"],
+  "Three Dots and a Dash":    ["tiki","tropical","herbal"],
+  "The Chartreuse Swizzle":   ["herbal","tropical","refreshing"],
+  "The Satellite":            ["refreshing","fruity","citrus"],
+  "Between the Sheets":       ["sour","boozy","citrus"],
+  "The Embassy Cocktail":     ["sour","fruity","bitter"],
+  "The Sidecar":              ["sour","citrus","boozy"],
+  "The Last Word":            ["sour","herbal","fruity"],
+  "The Sagehen":              ["herbal","fruity","floral"],
+  "The Widow's Kiss":         ["herbal","fruity","boozy"],
+  "Last Flight":              ["sour","bitter","fruity"],
+  "Naked and Famous":         ["sour","bitter","smoky"],
+  "The Division Bell":        ["sour","bitter","smoky"],
+  "The Final Ward":           ["sour","herbal","fruity"],
+  "The Monte Cassino":        ["sour","herbal","sweet"],
+  "Banana Daiquiri":          ["fruity","sweet","tropical"],
+  "Bourbon Blackberry Smash": ["fruity","refreshing","herbal"],
+  "Strawberry Basil Smash":   ["fruity","herbal","refreshing"],
+  "Blueberry Thyme Smash":    ["fruity","herbal","refreshing"],
+  "Pornstar Martini":         ["tropical","sweet","fruity"],
+  "Baby's First Bourbon":     ["sweet","nutty","sour"],
+  "Campanula Sour":           ["sour","floral","fruity"],
+  "Reles Sour":               ["sour","fruity","creamy"],
+  "The Cosmopolitan":         ["fruity","citrus","sweet"],
+  "The Piña Colada":          ["tropical","creamy","sweet"],
+  "The Painkiller":           ["tropical","creamy","sweet"],
+  "Jungle Bird":              ["bitter","tropical","fruity"],
+  "Añejo Highball":           ["refreshing","citrus","spicy"],
+  "Kingston Negroni":         ["bitter","fruity","boozy"],
+  "Gin Basil Smash":          ["herbal","refreshing","citrus"],
+  "Tia Mia":                  ["nutty","smoky","citrus"],
+  "Rye Smash (Tennessee Style)":["sour","nutty","herbal"],
+  "Juliet & Romeo":           ["floral","refreshing","herbal"],
+  "The White Lady":           ["sour","citrus","creamy"],
+  "Classic Margarita":        ["sour","citrus","boozy"],
+  "Smoky Spicy Margarita":    ["smoky","spicy","sour"],
+  "Frozen Strawberry Margarita":["fruity","sweet","citrus"],
+  "Whiskey Sour":             ["sour","sweet","creamy"],
+  "Mojito (Fast)":            ["refreshing","herbal","citrus"],
+  "Mojito (Slow)":            ["refreshing","herbal","citrus"],
+  "Classic Daiquiri":         ["sour","citrus","refreshing"],
+  "Dark Daiquiri":            ["boozy","sour","citrus"],
+  "Queen's Park Swizzle":     ["refreshing","herbal","bitter"],
+  "Whiskey Smash":            ["refreshing","herbal","citrus"],
+  "Hotel Nacional":           ["tropical","fruity","sour"],
+  "Mexican Firing Squad":     ["fruity","sour","bitter"],
+  "The Port Light":           ["tropical","sweet","fruity"],
+  "The Rum Manhattan":        ["boozy","bitter","sweet"],
+  "Negroni":                  ["bitter","herbal","boozy"],
+  "The Pegu Club":            ["sour","bitter","citrus"],
+  "The Manhattan":            ["boozy","bitter","sweet"],
+  "New York Sour":            ["sour","fruity","creamy"],
+  "The Boulevardier":         ["bitter","boozy","fruity"],
+  "The Old Fashioned":        ["boozy","bitter","sweet"],
+};
+
+const SL={gin:"Gin",rum:"Rum",whiskey:"Whiskey",tequila:"Tequila",cognac:"Cognac",vodka:"Vodka",mezcal:"Mezcal",other:"Other"};
+let af="all";
+let ALL_RECIPES=[...C]; // will be extended with approved sheet recipes
+
+// ── Load approved recipes from Google Sheet ──────────────────
+async function loadApproved(){
+  if(!APPS_SCRIPT_URL) return;
+  try {
+    const res = await fetch(APPS_SCRIPT_URL);
+    const data = await res.json();
+    if(data.ok && data.recipes && data.recipes.length){
+      // Merge: skip any that already exist by name
+      const existing = new Set(ALL_RECIPES.map(r=>r.name.toLowerCase()));
+      const newOnes = data.recipes.filter(r=>!existing.has(r.name.toLowerCase()));
+      ALL_RECIPES = [...ALL_RECIPES, ...newOnes];
+      render();
+      initCounts();
+      apply();
+    }
+  } catch(e){ /* sheet not reachable — fail silently */ }
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+function render(){
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
+  ALL_RECIPES.forEach((c,i)=>{
+    const p=c.s[0]||'other';
+    const flavs=c.flavors||(FLAVORS[c.name]||[]);
+    const isPending=!!c._pending;
+    const card=document.createElement('div');
+    card.className='card';
+    card.dataset.spirits=c.s.join(',');
+    card.dataset.search=(c.name+' '+c.i.map(x=>x.n).join(' ')).toLowerCase();
+
+    const ings=c.i.map(x=>{
+      if(x.a&&x.a.startsWith('—'))
+        return`<li class="divider-row s-${p}" style="color:var(--${p});border-color:transparent;background:transparent">${x.a}</li>`;
+      return`<li><span class="amt">${x.a||''}</span><span>${x.n}</span></li>`;
+    }).join('');
+
+    const spiritTags=c.s.map(s=>`<span class="card-tag s-${s}">${SL[s]||s}</span>`).join('');
+    const flavTags=flavs.map(f=>`<span class="flav ${f}">${f}</span>`).join('');
+
+    card.innerHTML=`
+      <div class="card-band bg-${p}"></div>
+      <div class="card-inner">
+        <div class="card-head">
+          <div class="card-name">${c.name}${isPending?' <span class="card-pending">pending</span>':''}</div>
+          <div class="spirit-tags">${spiritTags}</div>
+        </div>
+        ${flavTags?`<div class="flavor-row">${flavTags}</div>`:''}
+        <ul class="card-ings">${ings}</ul>
+        ${c.g?`<div class="card-garnish">✦ ${c.g}</div>`:''}
+        ${c.note?`<div class="card-note">📝 ${c.note}</div>`:''}
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  const n=ALL_RECIPES.length;
+  document.getElementById('hcount').textContent=n+' RECIPES';
+}
+
+// ── COUNTS ───────────────────────────────────────────────────
+function initCounts(){
+  updateCounts('');
+}
+
+function updateCounts(q){
+  const spirits=["all","gin","rum","whiskey","cognac","tequila","mezcal","vodka","other"];
+  spirits.forEach(s=>{
+    const count=ALL_RECIPES.filter(c=>{
+      const mS=s==="all"||c.s.includes(s);
+      const mQ=!q||(c.name+' '+c.i.map(x=>x.n).join(' ')).toLowerCase().includes(q);
+      return mS&&mQ;
+    }).length;
+    const el=document.getElementById('fc-'+s);
+    if(el) el.textContent='('+count+')';
+  });
+}
+
+// ── FILTER & SEARCH ──────────────────────────────────────────
+function setF(f,b){
+  af=f;
+  document.querySelectorAll('.fb').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  apply();
+}
+
+function apply(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  let v=0;
+  document.querySelectorAll('.card').forEach(card=>{
+    const show=(af==='all'||card.dataset.spirits.split(',').includes(af))&&(!q||card.dataset.search.includes(q));
+    card.classList.toggle('hidden',!show);
+    if(show)v++;
+  });
+  document.getElementById('rc').textContent=v+' cocktail'+(v!==1?'s':'');
+  document.getElementById('empty').classList.toggle('visible',v===0);
+  updateCounts(q);
+}
+
+// ── SUGGEST MODAL ────────────────────────────────────────────
+function openSuggest(){document.getElementById('suggestBackdrop').classList.add('open');document.body.style.overflow='hidden';}
+function closeSuggest(){document.getElementById('suggestBackdrop').classList.remove('open');document.body.style.overflow='';resetForm();}
+function closeSuggestOutside(e){if(e.target===document.getElementById('suggestBackdrop'))closeSuggest();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSuggest();});
+
+function resetForm(){
+  ['f-name','f-spirits2','f-ings','f-garnish','f-notes','f-source'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  document.getElementById('f-spirit').value='';
+  const lr=document.getElementById('lookup-result');
+  lr.className='lookup-result'; lr.textContent='';
+  const st=document.getElementById('smod-status');
+  st.className='smod-status'; st.textContent='';
+  document.getElementById('smod-submit').disabled=false;
+}
+
+// ── AUTO-LOOKUP ──────────────────────────────────────────────
+async function doLookup(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){alert('Enter a cocktail name first.');return;}
+
+  const lr=document.getElementById('lookup-result');
+  lr.className='lookup-result';
+  lr.textContent='🔍 Searching Giffard, Difford\'s and Liquor.com…';
+  lr.style.display='block';
+  lr.style.borderColor='var(--border)';
+  lr.style.background='var(--bg2)';
+  lr.style.color='var(--muted)';
+
+  // We use the Claude API (already available in this artifact context) to look up the recipe
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:1000,
+        tools:[{type:"web_search_20250305",name:"web_search"}],
+        messages:[{role:"user",content:`Search for the cocktail recipe "${name}" on Giffard.com, Diffordsguide.com, and Liquor.com. 
+Return ONLY a JSON object (no markdown) with these fields:
+{
+  "found": true/false,
+  "source": "URL where found",
+  "spirits": ["gin"],
+  "ingredients": [{"a":"1.5 oz","n":"Plymouth Gin"}, ...],
+  "garnish": "garnish description or null",
+  "flavors": ["sour","fruity"],
+  "notes": "any special notes or null"
+}
+If not found on any of those sites, return {"found":false}.`}]
+      })
+    });
+    const data=await response.json();
+    const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+
+    let parsed=null;
+    try{
+      const clean=text.replace(/```json|```/g,'').trim();
+      parsed=JSON.parse(clean);
+    }catch(_){
+      // Try to extract JSON from text
+      const m=text.match(/\{[\s\S]*\}/);
+      if(m) try{parsed=JSON.parse(m[0]);}catch(_){}
+    }
+
+    if(parsed&&parsed.found){
+      lr.className='lookup-result found';
+      lr.innerHTML=`✅ Found on <a href="${parsed.source}" target="_blank" style="color:inherit;text-decoration:underline">${new URL(parsed.source).hostname}</a>! Recipe pre-filled below. Review and submit.`;
+
+      // Pre-fill form
+      if(parsed.spirits&&parsed.spirits.length) document.getElementById('f-spirit').value=parsed.spirits[0];
+      if(parsed.spirits&&parsed.spirits.length>1) document.getElementById('f-spirits2').value=parsed.spirits.slice(1).join(', ');
+      if(parsed.ingredients) document.getElementById('f-ings').value=parsed.ingredients.map(x=>x.a+' '+x.n).join('\n');
+      if(parsed.garnish) document.getElementById('f-garnish').value=parsed.garnish;
+      if(parsed.notes) document.getElementById('f-notes').value=parsed.notes;
+      if(parsed.source) document.getElementById('f-source').value=parsed.source;
+
+      // Store parsed data for submission
+      document.getElementById('f-ings').dataset.parsed=JSON.stringify(parsed.ingredients);
+      document.getElementById('f-ings').dataset.flavors=JSON.stringify(parsed.flavors||[]);
+
+    } else {
+      lr.className='lookup-result notfound';
+      lr.textContent='❌ Recipe not found automatically on Giffard, Difford\'s or Liquor.com. Please fill in the details manually — it will go to the curator for review.';
+    }
+  }catch(err){
+    lr.className='lookup-result notfound';
+    lr.textContent='⚠️ Lookup failed ('+err.message+'). Please fill in the recipe manually.';
+  }
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────
+async function submitSuggestion(){
+  const name    = document.getElementById('f-name').value.trim();
+  const spirit  = document.getElementById('f-spirit').value;
+  const spirits2= document.getElementById('f-spirits2').value.trim();
+  const ingsRaw = document.getElementById('f-ings').value.trim();
+  const garnish = document.getElementById('f-garnish').value.trim();
+  const notes   = document.getElementById('f-notes').value.trim();
+  const source  = document.getElementById('f-source').value.trim();
+  const parsedIngs = document.getElementById('f-ings').dataset.parsed;
+  const parsedFlavs= document.getElementById('f-ings').dataset.flavors;
+
+  if(!name){alert('Please enter a cocktail name.');return;}
+  if(!spirit){alert('Please select a primary spirit.');return;}
+  if(!ingsRaw&&!parsedIngs){alert('Please add at least one ingredient.');return;}
+
+  // Build spirits array
+  const allSpirits=[spirit,...spirits2.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean)];
+
+  // Build ingredients array
+  let ingsArr;
+  if(parsedIngs){
+    ingsArr=JSON.parse(parsedIngs);
+  } else {
+    ingsArr=ingsRaw.split('\n').filter(Boolean).map(line=>{
+      const m=line.match(/^([¼½¾⅓⅔\d\/\.\s]+(?:oz|ml|dash(?:es)?|drop|tbs?p?|cup|pinch|tbsp|sprig|slice|bar spoon|bsp)?\.?)\s+(.+)/i);
+      return m?{a:m[1].trim(),n:m[2].trim()}:{a:'',n:line.trim()};
+    });
+  }
+
+  const flavors=parsedFlavs?JSON.parse(parsedFlavs):[];
+
+  const btn=document.getElementById('smod-submit');
+  const st=document.getElementById('smod-status');
+  btn.disabled=true;
+  btn.textContent='Submitting…';
+  st.className='smod-status'; st.textContent='';
+
+  if(!APPS_SCRIPT_URL){
+    // Demo mode — show locally with pending badge
+    ALL_RECIPES.push({name,s:allSpirits,i:ingsArr,g:garnish||null,note:notes||null,flavors,_pending:true});
+    render(); initCounts(); apply();
+    st.className='smod-status success';
+    st.textContent='✅ Added locally (demo mode — no Apps Script URL set yet). Configure the URL to send to Google Sheets.';
+    btn.textContent='Submit for Review →';
+    btn.disabled=false;
+    return;
+  }
+
+  try{
+    const res=await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      body:JSON.stringify({
+        name,spirits:allSpirits.join(','),
+        ingredients:JSON.stringify(ingsArr),
+        garnish,notes,
+        flavors:flavors.join(','),
+        sourceUrl:source
+      })
+    });
+    const data=await res.json();
+    if(data.ok){
+      st.className='smod-status success';
+      st.textContent='✅ Submitted! Your cocktail is pending review. Once approved it will appear in the menu.';
+      btn.textContent='Submitted ✓';
+    } else {
+      throw new Error(data.error||'Unknown error');
+    }
+  }catch(err){
+    st.className='smod-status error';
+    st.textContent='❌ Submission failed: '+err.message+'. Please try again.';
+    btn.textContent='Submit for Review →';
+    btn.disabled=false;
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+render();
+initCounts();
+apply();
+loadApproved();
+</script>
+</body>
+</html>
